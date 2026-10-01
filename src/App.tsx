@@ -1,8 +1,11 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ChatProvider, useChat } from './context/ChatContext'
 import { useGreenApiNotifications } from './hooks/useGreenApiNotifications'
 import { LoginScreen } from './components/LoginScreen'
 import { ChatSidebar } from './components/ChatSidebar'
 import { ChatWindow } from './components/ChatWindow'
+
+const queryClient = new QueryClient()
 
 function AppContent() {
   const { state } = useChat()
@@ -29,9 +32,11 @@ function AppContent() {
 
 function App() {
   return (
-    <ChatProvider>
-      <AppContent />
-    </ChatProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChatProvider>
+        <AppContent />
+      </ChatProvider>
+    </QueryClientProvider>
   )
 }
 

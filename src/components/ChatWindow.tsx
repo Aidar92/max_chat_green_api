@@ -1,4 +1,5 @@
-import { sendMessage } from '../api/greenApi'
+import { useMutation } from '@tanstack/react-query'
+import * as greenApi from '../api/greenApi'
 import { useChat } from '../context/ChatContext'
 import { MessageInput } from './MessageInput'
 import { MessageList } from './MessageList'
@@ -6,6 +7,11 @@ import { MessageList } from './MessageList'
 export function ChatWindow() {
   const { state, dispatch } = useChat()
   const chat = state.activeChatId ? state.chats[state.activeChatId] : null
+
+  const sendMessage = useMutation({
+    mutationFn: ({ chatId, text }: { chatId: string; text: string }) =>
+      greenApi.controller.sendMessage(state.credentials!, chatId, text),
+  })
 
   if (!chat || !state.credentials) {
     return (
@@ -16,7 +22,7 @@ export function ChatWindow() {
   }
 
   async function handleSend(text: string) {
-    await sendMessage(state.credentials!, chat!.chatId, text)
+    await sendMessage.mutateAsync({ chatId: chat!.chatId, text })
     dispatch({
       type: 'APPEND_MESSAGE',
       chatId: chat!.chatId,
